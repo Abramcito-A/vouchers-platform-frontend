@@ -1,166 +1,103 @@
-import type { Metadata } from "next";
-import KpiCard from "@/app/_components/dashboard/KpiCard";
-import QuickActions from "@/app/_components/dashboard/QuickActions";
-import LoansBehaviorChart from "@/app/_components/dashboard/LoansBehaviorChart";
-import RelationsDonutChart from "@/app/_components/dashboard/RelationsDonutChart";
-import SucursalesPanel from "@/app/_components/dashboard/SucursalesPanel";
-import SolicitudesTable from "@/app/_components/dashboard/SolicitudesTable";
-import AlertsPanel from "@/app/_components/dashboard/AlertsPanel";
-import RankingPanel from "@/app/_components/dashboard/RankingPanel";
-import ActivityTimeline from "@/app/_components/dashboard/ActivityTimeline";
-import FinancialPanel from "@/app/_components/dashboard/FinancialPanel";
-import { kpiData, panelFinanciero, alertasData } from "@/app/_lib/mock-data";
+"use client";
+import React from "react";
+import PageHeader from "@/app/_components/ui/PageHeader";
 
-export const metadata: Metadata = {
-  title: "Dashboard — MIS VALES",
-  description: "Panel principal del Gerente General. Visión completa del negocio.",
-};
-
-// ── Fecha de hoy formateada ────────────────────────────────
-function getTodayString() {
-  return new Intl.DateTimeFormat("es-MX", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date());
-}
-
-function formatMoney(n: number) {
-  return new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "MXN",
-    maximumFractionDigits: 0,
-  }).format(n);
+// Componente para Kpis rápidos
+function StatCard({ title, value, type = "default", subtext }: { title: string, value: string, type?: "default" | "success" | "warning" | "danger", subtext?: string }) {
+  const colors = {
+    default: "text-slate-800",
+    success: "text-green-600",
+    warning: "text-amber-600",
+    danger: "text-red-600"
+  };
+  
+  return (
+    <div className="card p-5 hover:shadow-md transition-shadow">
+      <h4 className="text-sm font-semibold text-slate-500 mb-2">{title}</h4>
+      <div className={`text-2xl font-black ${colors[type]}`}>{value}</div>
+      {subtext && <p className="text-xs text-slate-400 mt-2 font-medium">{subtext}</p>}
+    </div>
+  );
 }
 
 export default function DashboardPage() {
-  const today = getTodayString();
-  const errores = alertasData.filter((a) => a.tipo === "error").length;
-
   return (
-    <div className="flex flex-col gap-6 max-w-[1600px] mx-auto">
-      {/* ── Welcome Header ──────────────────────────────────── */}
-      <div
-        className="rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4"
-        style={{
-          background: "linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #1976D2 100%)",
-          boxShadow: "0 8px 32px rgba(13,71,161,0.25)",
-        }}
-      >
-        <div>
-          <p className="text-blue-200 text-sm font-medium capitalize">{today}</p>
-          <h1 className="text-white text-2xl font-black mt-1 leading-tight">
-            Bienvenido, Gerente General 👋
-          </h1>
-          <p className="text-blue-100 text-sm mt-1.5 max-w-lg">
-            Resumen ejecutivo del sistema MIS VALES. Tienes{" "}
-            <strong className="text-white">{errores} alertas críticas</strong> y{" "}
-            <strong className="text-white">34 solicitudes pendientes</strong> de revisión.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto pb-10">
+      <PageHeader 
+        title="Dashboard General" 
+        description="Centro de control operativo y financiero de la empresa."
+      />
 
-        {/* Stats rápidas */}
-        <div className="flex gap-4 flex-wrap">
-          {[
-            { label: "Recuperado hoy",  value: formatMoney(panelFinanciero.montoRecuperadoHoy), icon: "💵" },
-            { label: "Ganancia del mes", value: formatMoney(panelFinanciero.gananciasMes), icon: "📈" },
-            { label: "Crédito disponible", value: formatMoney(panelFinanciero.creditoDisponible), icon: "🏦" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className="rounded-xl px-4 py-3 min-w-[140px]"
-              style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}
-            >
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-base leading-none">{s.icon}</span>
-                <p className="text-blue-200 text-[10px] font-medium">{s.label}</p>
+      {/* 1. Bloque Financiero */}
+      <section className="mb-8">
+        <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Resumen Financiero</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard title="Total Colocado" value="$8,250,000" type="default" subtext="En créditos activos" />
+          <StatCard title="Total Recuperado" value="$5,120,400" type="success" subtext="Esta semana: $450k" />
+          <StatCard title="Cartera Vencida" value="$340,500" type="danger" subtext="Mora actual: 4.1%" />
+          <StatCard title="Utilidad Estimada" value="$1,180,000" type="success" subtext="Basada en intereses y comisiones" />
+        </div>
+      </section>
+
+      {/* 2. Bloque Operativo & Distribuidoras */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <section>
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Distribuidoras & Clientes</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <StatCard title="Distribuidoras Activas" value="1,245" subtext="Nuevas esta semana: 12" />
+            <StatCard title="Suspendidas" value="38" type="warning" subtext="Por morosidad o inactividad" />
+            <StatCard title="Total Clientes" value="14,890" subtext="En todas las sucursales" />
+            <StatCard title="En Alta/Proceso" value="15" type="default" subtext="Esperando verificación" />
+          </div>
+        </section>
+
+        <section>
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Operación del Día (Hoy)</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <StatCard title="Vales Emitidos" value="342" subtext="Monto: $452,000" />
+            <StatCard title="Pagos Recibidos" value="89" type="success" subtext="Monto: $112,000" />
+            <div className="col-span-2 bg-blue-50 rounded-xl p-4 border border-blue-100 flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-blue-900">Autorizaciones Pendientes</h4>
+                <p className="text-xs text-blue-700 mt-1">Aumentos, transferencias y altas que requieren tu firma.</p>
               </div>
-              <p className="text-white font-black text-lg leading-none">{s.value}</p>
+              <div className="text-3xl font-black text-blue-600">
+                14
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        </section>
       </div>
 
-      {/* ── Acciones rápidas ───────────────────────────────── */}
-      <QuickActions />
-
-      {/* ── Fila 1: KPIs ──────────────────────────────────── */}
+      {/* 3. Indicadores (Top 10 rápidos) */}
       <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Indicadores Clave (KPIs)
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-          {kpiData.map((kpi, i) => (
-            <KpiCard key={kpi.id} data={kpi} index={i} />
-          ))}
-        </div>
-      </section>
-
-      {/* ── Fila 2: Gráficas ──────────────────────────────── */}
-      <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Análisis Gráfico
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
-            <LoansBehaviorChart />
+        <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Desempeño Destacado</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="card p-5">
+            <h4 className="font-bold text-slate-700 mb-4">Top 3 Sucursales (Colocación)</h4>
+            <ul className="space-y-3">
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">1. Sucursal Norte</span><span className="font-bold text-slate-800">$2.1M</span></li>
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">2. Sucursal Centro</span><span className="font-bold text-slate-800">$1.8M</span></li>
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">3. Sucursal Sur</span><span className="font-bold text-slate-800">$1.4M</span></li>
+            </ul>
           </div>
-          <div>
-            <RelationsDonutChart />
+          <div className="card p-5">
+            <h4 className="font-bold text-slate-700 mb-4">Top 3 Distribuidoras</h4>
+            <ul className="space-y-3">
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">Carmen García</span><span className="font-bold text-green-600">Score: 99</span></li>
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">María López</span><span className="font-bold text-green-600">Score: 98</span></li>
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">Laura Torres</span><span className="font-bold text-green-600">Score: 95</span></li>
+            </ul>
+          </div>
+          <div className="card p-5 border-l-4 border-l-red-500">
+            <h4 className="font-bold text-slate-700 mb-4">Alerta de Morosidad</h4>
+            <ul className="space-y-3">
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">Sucursal Este</span><span className="font-bold text-red-600">8.2% Mora</span></li>
+              <li className="flex justify-between items-center text-sm"><span className="text-slate-600 font-medium">Dist: Ana Ruiz</span><span className="font-bold text-red-600">Vencido: 22d</span></li>
+            </ul>
           </div>
         </div>
       </section>
-
-      {/* ── Fila 3: Panel Financiero ──────────────────────── */}
-      <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Panel Financiero
-        </h2>
-        <FinancialPanel />
-      </section>
-
-      {/* ── Fila 4: Sucursales ────────────────────────────── */}
-      <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Rendimiento por Sucursal
-        </h2>
-        <SucursalesPanel />
-      </section>
-
-      {/* ── Fila 5: Solicitudes ───────────────────────────── */}
-      <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Solicitudes Pendientes
-        </h2>
-        <SolicitudesTable />
-      </section>
-
-      {/* ── Fila 6: Alertas ───────────────────────────────── */}
-      <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Alertas Importantes
-        </h2>
-        <AlertsPanel />
-      </section>
-
-      {/* ── Fila 7: Ranking + Timeline ────────────────────── */}
-      <section>
-        <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">
-          Ranking y Actividad
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <RankingPanel />
-          <ActivityTimeline />
-        </div>
-      </section>
-
-      {/* Footer */}
-      <div className="pb-4 text-center">
-        <p className="text-xs text-slate-400">
-          MIS VALES v1.0 · Sistema de Administración de Distribuidoras · Datos actualizados en tiempo real
-        </p>
-      </div>
     </div>
   );
 }

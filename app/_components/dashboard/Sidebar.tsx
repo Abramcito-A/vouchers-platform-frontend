@@ -116,38 +116,37 @@ const navGroups = [
   {
     label: "Principal",
     items: [
-      { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
+      { href: "/dashboard", icon: "dashboard", label: "Dashboard General" },
       { href: "/sucursales", icon: "building", label: "Sucursales" },
-      { href: "/distribuidoras", icon: "building-office", label: "Distribuidoras" },
     ],
   },
   {
-    label: "Usuarios",
+    label: "Directorio",
     items: [
       { href: "/coordinadores", icon: "users", label: "Coordinadores" },
       { href: "/verificadores", icon: "badge", label: "Verificadores" },
       { href: "/cajeras", icon: "user-check", label: "Cajeras" },
-      { href: "/clientes", icon: "users", label: "Clientes" },
+      { href: "/distribuidoras", icon: "building-office", label: "Distribuidoras" },
     ],
   },
   {
     label: "Operaciones",
     items: [
-      { href: "/vales", icon: "credit-card", label: "Vales" },
-      { href: "/relaciones", icon: "file-text", label: "Relaciones" },
-      { href: "/conciliaciones", icon: "refresh-cw", label: "Conciliaciones" },
-      { href: "/solicitudes", icon: "inbox", label: "Solicitudes" },
-      { href: "/catalogo", icon: "box", label: "Catálogo Productos" },
+      { href: "/solicitudes", icon: "inbox", label: "Solicitudes Pendientes" },
+      { href: "/creditos", icon: "credit-card", label: "Líneas de Crédito" },
+      { href: "/planes", icon: "box", label: "Planes de Vales" },
+      { href: "/productos", icon: "file-text", label: "Productos" },
+      { href: "/relaciones", icon: "refresh-cw", label: "Relaciones" },
     ],
   },
   {
-    label: "Sistema",
+    label: "Administración",
     items: [
-      { href: "/configuraciones", icon: "settings", label: "Configuraciones" },
-      { href: "/usuarios", icon: "user-cog", label: "Usuarios" },
-      { href: "/roles", icon: "shield", label: "Roles y Permisos" },
-      { href: "/bitacora", icon: "clipboard-list", label: "Bitácora" },
+      { href: "/usuarios", icon: "user-cog", label: "Admin Usuarios" },
+      { href: "/configuracion", icon: "settings", label: "Configuración General" },
       { href: "/reportes", icon: "bar-chart", label: "Reportes" },
+      { href: "/kpis", icon: "bar-chart", label: "KPIs" },
+      { href: "/auditoria", icon: "clipboard-list", label: "Auditoría (Logs)" },
     ],
   },
 ];
